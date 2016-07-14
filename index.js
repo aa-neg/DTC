@@ -4,16 +4,17 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 import Node from './containers/Node'
 
-import { Tree } from './components/tree'
+import ConnectedTree from './components/tree'
 import configureStore from './store/configureStore'
-import generateTree from './generateTree'
+
+import testConfigs from './testConfigs/testConfigs'
 
 // const tree = generateTree()
-const store = configureStore({hello: 'greeting'})
+const store = configureStore(testConfigs.config1)
 
 render(
   <Provider store={store}>
-    <Tree/>
+    <ConnectedTree/>
   </Provider>,
   document.getElementById('root')
 )
