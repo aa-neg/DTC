@@ -13,8 +13,10 @@ import testConfigs from './testConfigs/testConfigs'
 const store = configureStore(testConfigs.config1)
 
 render(
+  <div>
   <Provider store={store}>
     <ConnectedTree/>
-  </Provider>,
+  </Provider>
+  </div>,
   document.getElementById('root')
 )

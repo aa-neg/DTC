@@ -3,13 +3,15 @@ import { Component } from 'react'
 import { connect } from 'react-redux'
 import { Branch } from './branch';
 
-console.log(Branch)
+const _ = require('underscore');
+
 export class Tree extends Component {
 	constructor(props) {
 		super(props)
+		console.log(props)
 		this.renderChild = this.renderChild.bind(this)
 		this.dictionaryRender = this.dictionaryRender.bind(this)
-		console.log(this.dictionaryRender)
+
 	}
 
 	renderChild(childTree) {
@@ -33,8 +35,6 @@ export class Tree extends Component {
 	}
 
 	typeChecker(value, index) {
-		console.log("going through the type checker")
-		console.log(value)
 		switch (typeof value) {
 			case 'object':
 				let keyChar = 'a';
@@ -51,7 +51,10 @@ export class Tree extends Component {
 						case 'object':
 							console.log("objectfy")
 							return (
-								<Branch key={key} data={value[attribute]}/>
+								<div style={{ 'marginRight':'30px', color: 'lightblue' }}>
+									<ConnectedTree  key={key} data={value[attribute]}/>
+									<hr/>
+								</div>
 							)
 							break
 						case 'array':
@@ -79,58 +82,26 @@ export class Tree extends Component {
 			}
 		});
 
-		console.log("here is our values")
-
-		console.log(values)
-
 		let renderedValues = values.map(this.typeChecker)
-
-		console.log("here are our rendered values");
-
-		console.log(renderedValues)
 		return (
 			<div>
 				{renderedValues}
-				<br/>
-				<hr/>
-				<Branch data={this.props.level1}/>
 			</div>
 			)
-
-
-
-		// Object.keys(this.props).forEach((attribute)=> {
-		// 	if (typeof this.props[attribute] == 'object') {
-		// 		console.log("inside here we are recursing through")
-		// 		console.log(this.props[attribute])
-		// 		return (
-		// 			<div>
-		// 				<Branch data={this.props[attribute]}/>
-		// 			</div>
-		// 			)
-		// 	} else {
-		// 		console.log("leaf part")
-		// 		return (
-		// 			<div>
-		// 				hello we have our node
-		// 			</div>
-		// 			)
-		// 	}
-		// })
 	}
 
 }
 
 function mapStateToProps(state, ownProps) {
-	console.log(state);
-	console.log(ownProps);
-	return state
+	if (!_.isEmpty(ownProps)) {
+		return ownProps
+	//Base case returning the original state
+	} else {
+		return state
+	}
 }
 
 
 const ConnectedTree = connect(mapStateToProps, null)(Tree)
 
 export default ConnectedTree
-// export default Tree
-// const ConnectedTree = connect(actions)(Tree)
-// export default ConnectedTree
