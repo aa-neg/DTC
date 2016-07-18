@@ -9,7 +9,7 @@ var app = new (require('express'))()
 var port = 8080
 
 var compiler = webpack(config)
-app.use('/style', express.static(path.join(__dirname, './style', 'style')));
+app.use('/node_modules', express.static(__dirname + '/node_modules'));
 app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))
 app.use(webpackHotMiddleware(compiler))
 

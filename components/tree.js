@@ -2,36 +2,14 @@ import React from 'react'
 import { Component } from 'react'
 import { connect } from 'react-redux'
 import { Branch } from './branch';
-
+// var style = require('../style/treeStyle.css');
 const _ = require('underscore');
+
+
 
 export class Tree extends Component {
 	constructor(props) {
 		super(props)
-		console.log(props)
-		this.renderChild = this.renderChild.bind(this)
-		this.dictionaryRender = this.dictionaryRender.bind(this)
-
-	}
-
-	renderChild(childTree) {
-		return (
-			<Branch data={childTree}/>
-			)
-	}
-
-	renderLeaf(leaf) {
-		console.log("we are rendering our leaf")
-		return (
-			<div >
-				I am a leaf node {leaf}
-			</div>
-			)
-	}
-
-	dictionaryRender(value, key) {
-		console.log("inside dictionary Render");
-		console.log(value, key)
 	}
 
 	typeChecker(value, index) {
@@ -53,7 +31,6 @@ export class Tree extends Component {
 							return (
 								<div style={{ 'marginRight':'30px', color: 'lightblue' }}>
 									<ConnectedTree  key={key} data={value[attribute]}/>
-									<hr/>
 								</div>
 							)
 							break
@@ -70,22 +47,35 @@ export class Tree extends Component {
 		}
 	}
 
+	activate() {
+		console.log("activating");
+			var acc = document.getElementsByClassName("accordion");
+		var i;
+
+		for (i = 0; i < acc.length; i++) {
+		    acc[i].onclick = function(){
+		    	console.log("oi")
+		        this.classList.toggle("active");
+		        this.nextElementSibling.classList.toggle("show");
+		    }
+		}
+	}
+
 	render() {
 
-		let branches = <Branch data={this.props.level1a}/>
-
-		let values = [];
-
-		let rendering = Object.keys(this.props).forEach((attribute)=> {
+		let rendering = Object.keys(this.props).map((attribute, index)=> {
 			if (typeof this.props[attribute] != 'function') {
-				values.push(this.props[attribute])
+				return this.typeChecker(this.props[attribute], index)
 			}
 		});
 
-		let renderedValues = values.map(this.typeChecker)
+
 		return (
 			<div>
-				{renderedValues}
+				<button className="accordion" onClick={this.activate}>section</button>
+				<div className="panel">
+					{rendering}
+				</div>
 			</div>
 			)
 	}

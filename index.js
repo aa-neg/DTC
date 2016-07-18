@@ -1,3 +1,4 @@
+
 import 'babel-polyfill'
 import React from 'react'
 import { render } from 'react-dom'
@@ -8,6 +9,7 @@ import ConnectedTree from './components/tree'
 import configureStore from './store/configureStore'
 
 import testConfigs from './testConfigs/testConfigs'
+import './style/treeStyle.css'
 
 // const tree = generateTree()
 const store = configureStore(testConfigs.config1)
