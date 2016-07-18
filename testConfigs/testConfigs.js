@@ -18,7 +18,16 @@ export default {
 					}
 				}
 			}
+		},
+
+		level1b: {
+			name: "1b item"
+		},
+
+		level1c: {
+			name: "1c item"
 		}
+
 	}
 
 }
