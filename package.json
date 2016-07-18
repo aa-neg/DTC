@@ -1,5 +1,5 @@
 {
-  "name": "redux-tree-view-example",
+  "name": "DTC",
   "version": "0.0.0",
   "description": "general json front-end configurator",
   "author": "Arnodl Agus",
@@ -9,9 +9,6 @@
     "test:watch": "npm test -- --watch"
   },
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/reactjs/redux/issues"
-  },
   "homepage": "http://redux.js.org",
   "dependencies": {
     "babel-polyfill": "^6.3.14",

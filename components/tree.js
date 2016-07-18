@@ -5,83 +5,39 @@ import { Branch } from './branch';
 // var style = require('../style/treeStyle.css');
 const _ = require('underscore');
 
-
-
 export class Tree extends Component {
 	constructor(props) {
 		super(props)
-	}
-
-	typeChecker(value, index) {
-		switch (typeof value) {
-			case 'object':
-				let keyChar = 'a';
-				return Object.keys(value).map((attribute)=> {
-					let key = index.toString() + keyChar;
-					keyChar = String.fromCharCode(keyChar.charCodeAt() + 1);
-					switch (typeof value[attribute]) {
-						case 'string':
-							console.log("stringified");
-							return (
-								<div>
-									<button className="accordion" onClick={this.activate}>{attribute}</button>
-									<div className="panel">
-										<p key={key}>value here: {value[attribute]} </p>
-									</div>
-								</div>
-							)
-							break
-						case 'object':
-							console.log("objectfy")
-							return (
-								<div style={{ 'marginRight':'30px', color: 'lightblue' }}>
-									<button className="accordion" onClick={this.activate}>section</button>
-									<div className="panel">
-										<ConnectedTree  key={key} data={value[attribute]}/>
-									</div>
-								</div>
-							)
-							break
-						case 'array':
-							console.log("arrying")
-							break
-						default:
-							console.log("everything else")
-					}
-
-				})
-			default:
-				console.log("probably at a leaf node");
+		//If recursive iteration assign local level key
+		if (this.props.data && this.props.data.__DTC__id) {
+			this.key = this.props.data.__DTC__id;
+		// If first loop through assign level a
+		} else {
+			this.key = 'a';
 		}
 	}
 
-	activate() {
-
-		var acc = document.getElementsByClassName("accordion");
-		var i;
-
-		for (i = 0; i < acc.length; i++) {
-		    acc[i].onclick = function(){
-		        this.classList.toggle("active");
-		        this.nextElementSibling.classList.toggle("show");
-		    }
-		}
+	activateAccordion(element) {
+		element.target.classList.toggle("active");
+		element.target.nextElementSibling.classList.toggle("show");
 	}
 
 	generateSubtree(state) {
-		console.log(state)
-
-		let keyChar = 'a';
-
+		//  Each key interation will append another 'a';
+		this.key = this.key + 'a';
 		return Object.keys(state).map((attribute, index) => {
-			let key = index.toString() + keyChar;
+			// let key = index.toString() + keyChar;
+			this.key = this.key + index.toString();
+			// If not a DTC attribute we render it.
 
-			switch (typeof state[attribute]) {
+				switch (typeof state[attribute]) {
 				case 'object':
+					state[attribute]['__DTC__id'] = this.key
+					state[attribute]['__DTC__header'] = attribute
 					return (
-						<div>
+						<div key={this.key}>
 							<hr/>
-							<ConnectedTree key={key} data={state[attribute]}/>
+							<ConnectedTree data={state[attribute]}/>
 						</div>
 						)
 					break
@@ -89,45 +45,53 @@ export class Tree extends Component {
 					console.log("its an array");
 					break
 				default:
-					return (
-						<p key={key}>here is our attribute {state[attribute]} </p>
-						)
-			}
-
-			keyChar = String.fromCharCode(keyChar.charCodeAt() + 1);
+					if (attribute.indexOf('__DTC__') == -1) {
+						return (
+							<p key={this.key}>here is our attribute {state[attribute]} </p>
+							)
+					} else {
+						return
+					}
+				}
 
 		})
 
 	}
 
 	render() {
-
-
-		let keyChar = 'a';
-
-		return Object.keys(this.props).map((attribute, index)=> {
-			let key = index.toString() + keyChar;
-			keyChar = String.fromCharCode(keyChar.charCodeAt() + 1);
-			console.log(this.props[attribute])
-			let uniqueID = 1
-			let subtree = this.generateSubtree(this.props[attribute], uniqueID)
-			console.log(subtree)
+		let rendering = Object.keys(this.props).map((attribute, index)=> {
+			this.key = this.key + index.toString();
+			let subtree = this.generateSubtree(this.props[attribute])
+			// Create a copy of current key and pass this across (incase async operations occur)
+			let currentKey = this.key;
+			let header = '';
 			switch (typeof this.props[attribute]) {
 				case 'object':
+					if (this.props[attribute].__DTC__header) {
+						header = this.props[attribute].__DTC__header;
+					} else {
+						header = attribute;
+					}
 					return (
-						<div key = {key}>
-							<button className="accordion" onClick={this.activate}>{attribute}</button>
+						<div key={this.key}>
+							<button className="accordion" classID={currentKey} onClick={this.activateAccordion}>{header}</button>
 							<div className="panel">
 								{subtree}
 							</div>
 						</div>
 						)
+					break
 				default:
-					console.log("some leaf node")
+					console.log("end case.")
+					break
 			}
 		});
+		return (
+			<div>
+				{rendering}
+			</div>
+			)
 	}
-
 }
 
 function mapStateToProps(state, ownProps) {
