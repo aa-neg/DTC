@@ -22,46 +22,59 @@ export class Tree extends Component {
 		element.target.nextElementSibling.classList.toggle("show");
 	}
 
+	stateTypeCheck(attribute, state) {
+		switch (typeof state) {
+			case 'object':
+				state['__DTC__id'] = this.key;
+				state['__DTC__header'] = attribute;
+				if (Array.isArray(state)) {
+					console.log("within here for array type");
+					console.log(attribute);
+					console.log(state);
+					console.log(state['__DTC__id'])
+					// return state.map((state)=> {
+					// 	console.log("here is our state");
+					// 	console.log(state);
+					// })
+					// return state.map(this.stateTypeCheck())
+				} else {
+					return (
+					<div key={this.key}>
+						<hr/>
+						<ConnectedTree data={state}/>
+					</div>
+					)
+				}
+				break
+			default:
+				// If it is not a DTC unique property print it out.
+				if (attribute.indexOf('__DTC__') == -1) {
+					return (
+						<p key={this.key}>here is our attribute {state} </p>
+						)
+				} else {
+					return
+				}
+		}
+	}
+
+	/*
+	Function will increment the this.key (mutate this.key)
+	*/
 	generateSubtree(state) {
 		//  Each key interation will append another 'a';
 		this.key = this.key + 'a';
 		return Object.keys(state).map((attribute, index) => {
-			// let key = index.toString() + keyChar;
 			this.key = this.key + index.toString();
-			// If not a DTC attribute we render it.
-
-				switch (typeof state[attribute]) {
-				case 'object':
-					state[attribute]['__DTC__id'] = this.key
-					state[attribute]['__DTC__header'] = attribute
-					return (
-						<div key={this.key}>
-							<hr/>
-							<ConnectedTree data={state[attribute]}/>
-						</div>
-						)
-					break
-				case 'array':
-					console.log("its an array");
-					break
-				default:
-					if (attribute.indexOf('__DTC__') == -1) {
-						return (
-							<p key={this.key}>here is our attribute {state[attribute]} </p>
-							)
-					} else {
-						return
-					}
-				}
-
+			return this.stateTypeCheck(attribute, state[attribute])
 		})
-
 	}
 
 	render() {
 		let rendering = Object.keys(this.props).map((attribute, index)=> {
 			this.key = this.key + index.toString();
 			let subtree = this.generateSubtree(this.props[attribute])
+
 			// Create a copy of current key and pass this across (incase async operations occur)
 			let currentKey = this.key;
 			let header = '';

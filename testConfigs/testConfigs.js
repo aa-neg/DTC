@@ -25,7 +25,13 @@ export default {
 		},
 
 		level1c: {
-			name: "1c item"
+			name: "1c item",
+			testArray: [
+				'value1',
+				{
+					name: "mixed test array"
+				}
+			]
 		}
 
 	}
