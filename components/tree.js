@@ -84,12 +84,40 @@ export class Tree extends Component {
 	This requires generating the inner tree which will be the pertaining values
 	*/
 	generateSubtree(tree) {
-		console.log("here is our tree")
+		console.log("here is our subtree")
 		console.log(tree);
 		this.key = this.key + 'a';
 		if (Array.isArray(tree)) {
-			console.log("This was an array")
-			return ''
+			return tree.map((value, index)=> {
+				this.key = this.key + index.toString();
+				let currentKey = this.key;
+				console.log(index);
+				console.log(tree[index]);
+				switch (typeof value) {
+					case 'object':
+						value.__DTC__id = this.key;
+						return (
+							<div key={currentKey}>
+								<hr/>
+								<ConnectedTree data={value}/>
+							</div>
+							)
+					default:
+						return (
+							<p key={currentKey}> From array value: {value}</p>
+							)
+				}
+			})
+			let currentKey = this.key;
+			console.log("We have an array what will we do?");
+			console.log(tree);
+			// return (
+			// 	<div key={currentKey}>
+			// 		I'm an array!
+			// 		<hr/>
+			// 		<ConnectedTree data={tree}/>
+			// 	</div>
+			// 	)
 		} else {
 			return Object.keys(tree).map((attribute, index) => {
 				this.key = this.key + index.toString();
@@ -99,8 +127,9 @@ export class Tree extends Component {
 						tree[attribute]['__DTC__id'] = this.key;
 						tree[attribute]['__DTC__header'] = attribute;
 						console.log("supposed to have an object");
+						console.log(tree[attribute]);
 						return (
-							<div key={this.key}>
+							<div key={currentKey}>
 								<hr/>
 								<ConnectedTree data={tree[attribute]}/>
 							</div>
@@ -120,6 +149,9 @@ export class Tree extends Component {
 	This includes generating the headers
 	*/
 	generateTree(state) {
+		console.log("here is our main tree");
+		console.log(state);
+		console.log
 		let currentKey = this.key;
 
 		// Different looping depending on array or object
@@ -128,14 +160,14 @@ export class Tree extends Component {
 
 		} else {
 			return Object.keys(state).map((attribute, index) => {
-				switch (typeof this.props[attribute]) {
+				switch (typeof state[attribute]) {
 					case 'object':
 						this.key = this.key + index.toString();
 						let currentKey = this.key;
 						let subtree = this.generateSubtree(state[attribute]);
 						let header = ''
-						if (this.props[attribute.__DTC__header]) {
-							header = this.props[attribute].__DTC__header;
+						if (state[attribute].__DTC__header) {
+							header = state[attribute].__DTC__header;
 						} else {
 							header = attribute;
 						}
@@ -154,7 +186,7 @@ export class Tree extends Component {
 
 					default:
 						console.log("non object attribute");
-						console.log(typeof this.props[attribute]);
+						console.log(typeof state[attribute]);
 						console.log(attribute);
 						break;
 				}
@@ -173,46 +205,6 @@ export class Tree extends Component {
 			</div>
 			)
 	}
-
-	// render() {
-	// 	console.log("Rendering this . props");
-	// 	console.log(this.props);
-
-
-	// 	let rendering = Object.keys(this.props).map((attribute, index)=> {
-	// 		this.key = this.key + index.toString();
-	// 		let subtree = this.generateSubtree(this.props[attribute])
-
-	// 		// Create a copy of current key and pass this across (incase async operations occur)
-	// 		let currentKey = this.key;
-	// 		let header = '';
-	// 		switch (typeof this.props[attribute]) {
-	// 			case 'object':
-	// 				if (this.props[attribute].__DTC__header) {
-	// 					header = this.props[attribute].__DTC__header;
-	// 				} else {
-	// 					header = attribute;
-	// 				}
-	// 				return (
-	// 					<div key={this.key}>
-	// 						<button className="accordion" classID={currentKey} onClick={this.activateAccordion}>{header}</button>
-	// 						<div className="panel">
-	// 							{subtree}
-	// 						</div>
-	// 					</div>
-	// 					)
-	// 				break
-	// 			default:
-	// 				console.log("end case.")
-	// 				break
-	// 		}
-	// 	});
-	// 	return (
-	// 		<div>
-	// 			{rendering}
-	// 		</div>
-	// 		)
-	// }
 }
 
 function mapStateToProps(state, ownProps) {
