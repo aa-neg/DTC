@@ -96,6 +96,7 @@ export class Tree extends Component {
 				switch (typeof value) {
 					case 'object':
 						value.__DTC__id = this.key;
+						//Insert header option here.
 						return (
 							<div key={currentKey}>
 								<hr/>
@@ -111,13 +112,6 @@ export class Tree extends Component {
 			let currentKey = this.key;
 			console.log("We have an array what will we do?");
 			console.log(tree);
-			// return (
-			// 	<div key={currentKey}>
-			// 		I'm an array!
-			// 		<hr/>
-			// 		<ConnectedTree data={tree}/>
-			// 	</div>
-			// 	)
 		} else {
 			return Object.keys(tree).map((attribute, index) => {
 				this.key = this.key + index.toString();
@@ -136,9 +130,13 @@ export class Tree extends Component {
 						)
 
 					default:
-						return (
-							<p key={currentKey}>Attribute: {attribute} value: {tree[attribute]}</p>
-							)
+						if (attribute.indexOf('__DTC__') == -1) {
+							return (
+								<p key={currentKey}>Attribute: {attribute} value: {tree[attribute]}</p>
+								)
+						} else {
+							return
+						}
 				}
 
 			})
@@ -156,7 +154,38 @@ export class Tree extends Component {
 
 		// Different looping depending on array or object
 		if (Array.isArray(state)) {
-			console.log("Our tree was an array?");
+			return state.map((attribute, index) => {
+				switch (typeof state[attribute]) {
+					case 'object':
+						this.key = this.key + index.toString();
+						let currentKey = this.key;
+						let subtree = this.generateSubtree(attribute);
+						let header = ''
+						if (attribute.__DTC__header) {
+							header = attribute.__DTC__header;
+						} else {
+							header = attribute;
+						}
+						return (
+							<div key={currentKey}>
+								<button className="accordion" classID={currentKey} onClick={this.activateAccordion}>{header}</button>
+									<div className="panel">
+			 							{subtree}
+			 						</div>
+							</div>
+						)
+						break;
+					case 'function':
+						console.log("we got a function");
+						break;
+
+					default:
+						console.log("non object attribute");
+						console.log(typeof state[attribute]);
+						console.log(attribute);
+						break;
+				}
+			})
 
 		} else {
 			return Object.keys(state).map((attribute, index) => {
